@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://unpkg.com/react@16.7.0/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16.7.0/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <meta charset="utf-8">
+        <title>Wordle Redux</title>
+        <style>
+            .WordleBoard {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 20px;
+            }
+            .GuessRow {
+                display: flex;
+                justify-content: center;
+                min-height: 30px;
+            }
+            .Guess {
+                width: 30px;
+                height: 30px;
+                border: 1px solid #000;
+                margin: 0 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: bold;
+            }
+            .correct {
+                background-color: lightgreen;
+            }
+            .misplaced {
+                background-color: lightyellow;
+            }
+            .incorrect {
+                background-color: lightcoral;
+            }
+            .Keyboard {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .Key {
+                width: 30px;
+                height: 30px;
+                border: 1px solid #000;
+                margin: 5px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+            }
+            .Row {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            const { createElement, Component } = React;
+            const { render } = ReactDOM;
+
+            function Guess({ guess, feedback }) {
+                const letterElements = guess.map((fb, index) => {
+                    let colorClass;
+                    if (feedback[index] === 'correct') {
+                        colorClass = 'correct';
+                    } else if (feedback[index] === 'misplaced') {
+                        colorClass = 'misplaced';
+                    } else {
+                        colorClass = 'incorrect';
+                    }
+                    return <div key={index} className={`Guess ${colorClass}`}>{fb}</div>;
+                });
+                return <div className="GuessRow">{letterElements}</div>;
+            }
+
+            class App extends Component {
+                render() {
+                    const guesses = [
+                        { guess: ['M', 'I', 'G', 'H', 'T'], feedback: ['correct', 'incorrect', 'incorrect', 'incorrect', 'incorrect'] },
+                        { guess: ['F', 'L', 'O', 'O', 'D'], feedback: ['incorrect', 'incorrect', 'correct', 'misplaced', 'misplaced'] },
+                        { guess: ['S', 'T', 'R', 'A', 'Y'], feedback: ['incorrect', 'incorrect', 'incorrect', 'incorrect', 'correct'] },
+                        { guess: ['M', 'O', 'O', 'D', 'Y'], feedback: ['correct', 'correct', 'correct', 'correct', 'correct'] }
+                    ];
+                    const emptyRows = Array.from({ length: 2 }, (_, rowIndex) => (
+                        <div key={rowIndex} className="GuessRow">
+                            {Array.from({ length: 5 }, (_, colIndex) => (
+                                <div key={colIndex} className="Guess">&#xA0;</div>
+                            ))}
+                        </div>
+                    ));
+                    return (
+                        <div className="App">
+                            <h1>Wordle</h1>
+                            <div className="WordleBoard">
+                                {guesses.map((guessObj, index) => (
+                                    <Guess key={index} guess={guessObj.guess} feedback={guessObj.feedback} />
+                                ))}
+                                {emptyRows}
+                        </div>
+                        <div className="Keyboard">
+                            <div className="Row">
+                                {Array.from({ length: 10 }, (_, i) => (
+                                    <div key={i} className="Key">{String.fromCharCode(65 + i)}</div>
+                                ))}
+                            </div>
+                            <div className="Row">
+                                {Array.from({ length: 9 }, (_, i) => (
+                                    <div key={i + 10} className="Key">{String.fromCharCode(75 + i)}</div>
+                                ))}
+                            </div>
+                            <div className="Row">
+                                {Array.from({ length: 7 }, (_, i) => (
+                                    <div key={i + 19} className="Key">{String.fromCharCode(84 + i)}</div>
+                                ))}
+                            </div>
+                        </div>
+                        </div>
+                    );
+                }
+            }
+            render(
+                <App />,
+                document.getElementById('root')
+            );
+</script>
+</body>
+</html>
